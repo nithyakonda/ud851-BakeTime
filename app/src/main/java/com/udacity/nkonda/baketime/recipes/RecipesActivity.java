@@ -1,9 +1,11 @@
-package com.udacity.nkonda.baketime;
+package com.udacity.nkonda.baketime.recipes;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class RecepiesActivity extends AppCompatActivity {
+import com.udacity.nkonda.baketime.R;
+
+public class RecipesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
