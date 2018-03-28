@@ -1,5 +1,7 @@
 package com.udacity.nkonda.baketime.data;
 
+import com.udacity.nkonda.baketime.R;
+
 import java.util.List;
 
 /**
@@ -12,15 +14,15 @@ public class Recipe {
     private final List<Ingredient> mIngredients;
     private final List<RecipeStep> mRecipeSteps;
     private final int mServings;
-    private final String mImage;
+    private final int mImageResId;
 
-    public Recipe(int id, String name, List<Ingredient> ingredients, List<RecipeStep> recipeSteps, int servings, String image) {
+    public Recipe(int id, String name, List<Ingredient> ingredients, List<RecipeStep> recipeSteps, int servings) {
         mId = id;
         mName = name;
         mIngredients = ingredients;
         mRecipeSteps = recipeSteps;
         mServings = servings;
-        mImage = image;
+        mImageResId = getImageRes();
     }
 
     public int getId() {
@@ -43,7 +45,22 @@ public class Recipe {
         return mServings;
     }
 
-    public String getImage() {
-        return mImage;
+    public int getImageResId() {
+        return mImageResId;
+    }
+
+    private int getImageRes() {
+        switch (mName) {
+            case "Nutella Pie":
+                return R.drawable.nutella_pie;
+            case "Brownies":
+                return R.drawable.brownies;
+            case "Yellow Cake":
+                return R.drawable.yellow_cake;
+            case "Cheesecake":
+                return R.drawable.cheese_cake;
+            default:
+                    return 0;
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.udacity.nkonda.baketime.R;
 import com.udacity.nkonda.baketime.data.Ingredient;
 import com.udacity.nkonda.baketime.data.Recipe;
 import com.udacity.nkonda.baketime.data.RecipeStep;
+import com.udacity.nkonda.baketime.util.JsonHelper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class RecipesRepository implements RecipesDataSource{
 
     @Override
     public List<Recipe> getRecipes() {
-        return null;
+        return JsonHelper.parseRecipesJsonStr(getRecipeJsonString());
     }
 
     @Override
@@ -44,10 +45,6 @@ public class RecipesRepository implements RecipesDataSource{
     @Override
     public List<RecipeStep> getRecipeStepDetail(int recipeStepId) {
         return null;
-    }
-
-    private void parseRecipesJson() {
-
     }
 
     private String getRecipeJsonString() {

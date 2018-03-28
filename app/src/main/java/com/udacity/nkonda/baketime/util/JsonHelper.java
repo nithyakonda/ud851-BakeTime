@@ -22,7 +22,6 @@ public class JsonHelper {
     private static final String INGREDIENTS_JSON = "ingredients";
     private static final String STEPS_JSON = "steps";
     private static final String SERVINGS_JSON = "servings";
-    private static final String IMAGE_JSON = "image";
 
     private static final String QUANTITY_JSON = "quantity";
     private static final String INGREDIENT_JSON = "ingredient";
@@ -44,8 +43,7 @@ public class JsonHelper {
                         recipeJson.getString(NAME_JSON),
                         parseIngredientsJsonArr(recipeJson.getJSONArray(INGREDIENTS_JSON)),
                         parseRecipeStepsJsonArr(recipeJson.getJSONArray(STEPS_JSON)),
-                        recipeJson.getInt(SERVINGS_JSON),
-                        recipeJson.getString(IMAGE_JSON)
+                        recipeJson.getInt(SERVINGS_JSON)
                 ));
             }
         } catch (JSONException e) {
