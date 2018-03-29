@@ -112,7 +112,7 @@ public class RecipeStepListActivity extends AppCompatActivity {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.recipestep_list_content, parent, false);
+                    .inflate(R.layout.recipestep_list_item, parent, false);
             return new ViewHolder(view);
         }
 
@@ -136,7 +136,7 @@ public class RecipeStepListActivity extends AppCompatActivity {
 
             ViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
+                mIdView = (TextView) view.findViewById(R.id.tv_short_desc);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
         }

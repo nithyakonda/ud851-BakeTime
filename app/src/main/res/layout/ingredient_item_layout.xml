@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        style="@style/IngredientTextViewStyle"
+        android:id="@+id/tv_name"
+        tools:text="Cream"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+    />
+    <TextView
+        style="@style/IngredientTextViewStyle"
+        android:id="@+id/tv_qty"
+        tools:text="2"
+        app:layout_constraintTop_toTopOf="@id/tv_name"
+        app:layout_constraintRight_toLeftOf="@id/tv_measure"
+        android:layout_marginRight="8dp"
+    />
+    <TextView
+        style="@style/IngredientTextViewStyle"
+        android:id="@+id/tv_measure"
+        tools:text="TBSP"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_name"
+    />
+</android.support.constraint.ConstraintLayout>
