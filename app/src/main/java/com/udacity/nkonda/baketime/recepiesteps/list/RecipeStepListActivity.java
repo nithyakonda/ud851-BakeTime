@@ -3,12 +3,8 @@ package com.udacity.nkonda.baketime.recepiesteps.list;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +19,6 @@ import com.udacity.nkonda.baketime.data.Recipe;
 import com.udacity.nkonda.baketime.data.RecipeStep;
 import com.udacity.nkonda.baketime.recepiesteps.detail.RecipeStepDetailActivity;
 import com.udacity.nkonda.baketime.recepiesteps.detail.RecipeStepDetailFragment;
-import com.udacity.nkonda.baketime.recepiesteps.dummy.DummyContent;
 
 import java.util.List;
 
@@ -37,11 +32,14 @@ import java.util.List;
  */
 public class RecipeStepListActivity extends BaseActivity implements RecipeStepListContract.View{
     private static final String ARGKEY_RECIPE = "ARGKEY_RECIPE";
+    private static final String SAVEKEY_RECIPE = "SAVEKEY_RECIPE";
+    private static final String SAVEKEY_STEP_ID = "SAVEKEY_STEP_ID";
 
     private RecyclerView mRecyclerView;
 
     private boolean mTwoPane;
     private RecipeStepListPresenter mPresenter;
+    private RecipeStepListState mState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +61,29 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
         mRecyclerView = findViewById(R.id.recipestep_list);
         assert mRecyclerView != null;
         mPresenter = new RecipeStepListPresenter(this);
-        if (savedInstanceState == null &&
-                getIntent().hasExtra(ARGKEY_RECIPE)) {
+        if (savedInstanceState == null) {
             Recipe recipe = (Recipe) getIntent().getParcelableExtra(ARGKEY_RECIPE);
-            mPresenter.loadRecipeDetails(recipe);
             getSupportActionBar().setTitle(recipe.getName());
+            mState = new RecipeStepListState(0,
+                    recipe);
+        } else {
+            mState = new RecipeStepListState(savedInstanceState.getInt(SAVEKEY_STEP_ID),
+                    (Recipe) savedInstanceState.getParcelable(SAVEKEY_RECIPE));
         }
-        // TODO: 4/5/18 handle state
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter.start(mState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        RecipeStepListState state = (RecipeStepListState) mPresenter.getState();
+        outState.putInt(SAVEKEY_STEP_ID, state.getLastSelectedStepId());
+        outState.putParcelable(SAVEKEY_RECIPE, state.getLastRecipe());
     }
 
     @Override

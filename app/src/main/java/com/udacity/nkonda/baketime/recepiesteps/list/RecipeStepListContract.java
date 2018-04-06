@@ -1,6 +1,7 @@
 package com.udacity.nkonda.baketime.recepiesteps.list;
 
 import com.udacity.nkonda.baketime.BasePresenter;
+import com.udacity.nkonda.baketime.BaseState;
 import com.udacity.nkonda.baketime.BaseView;
 import com.udacity.nkonda.baketime.data.Recipe;
 
@@ -13,8 +14,13 @@ public interface RecipeStepListContract {
         void showRecipeDetails(Recipe recipe);
     }
 
-    interface Presenter extends BasePresenter {
-        void loadRecipeDetails(Recipe recipe);
+    interface Presenter extends BasePresenter<State> {
+        void loadRecipeDetails();
         void onStepSelected(int recipeStepId);
+    }
+
+    interface State extends BaseState {
+        int getLastSelectedStepId();
+        Recipe getLastRecipe();
     }
 }

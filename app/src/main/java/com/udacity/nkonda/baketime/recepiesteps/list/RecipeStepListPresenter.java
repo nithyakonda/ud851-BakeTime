@@ -1,6 +1,5 @@
 package com.udacity.nkonda.baketime.recepiesteps.list;
 
-import com.udacity.nkonda.baketime.BaseState;
 import com.udacity.nkonda.baketime.data.Recipe;
 
 /**
@@ -10,13 +9,16 @@ import com.udacity.nkonda.baketime.data.Recipe;
 public class RecipeStepListPresenter implements RecipeStepListContract.Presenter{
     private RecipeStepListContract.View mView;
 
+    private static int sLastSelectedStepId = 0;
+    private static Recipe sRecipe;
+
     public RecipeStepListPresenter(RecipeStepListContract.View view) {
         mView = view;
     }
 
     @Override
-    public void loadRecipeDetails(Recipe recipe) {
-        mView.showRecipeDetails(recipe);
+    public void loadRecipeDetails() {
+        mView.showRecipeDetails(sRecipe);
     }
 
     @Override
@@ -25,12 +27,16 @@ public class RecipeStepListPresenter implements RecipeStepListContract.Presenter
     }
 
     @Override
-    public void start(BaseState state) {
-
+    public void start(RecipeStepListContract.State state) {
+        if (state != null) {
+            sLastSelectedStepId = state.getLastSelectedStepId();
+            sRecipe = state.getLastRecipe();
+        }
+        loadRecipeDetails();
     }
 
     @Override
-    public BaseState getState() {
-        return null;
+    public RecipeStepListContract.State getState() {
+        return new RecipeStepListState(sLastSelectedStepId, sRecipe);
     }
 }
