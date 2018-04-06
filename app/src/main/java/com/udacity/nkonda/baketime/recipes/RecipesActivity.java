@@ -37,7 +37,7 @@ public class RecipesActivity extends BaseActivity implements RecipesContract.Vie
         mAdapter.setOnItemClickedListener(new RecipesAdapter.OnItemClickedListener() {
             @Override
             public void onClick(int position) {
-
+                mPresenter.recipeSelected(RecipesActivity.this, position);
             }
         });
         mRecipesView.setLayoutManager(layoutManager);
@@ -53,11 +53,4 @@ public class RecipesActivity extends BaseActivity implements RecipesContract.Vie
         mAdapter.setRecipes(recipes);
         mAdapter.notifyDataSetChanged();
     }
-
-    @Override
-    public void recipeSelected(int pos) {
-
-    }
-
-
 }

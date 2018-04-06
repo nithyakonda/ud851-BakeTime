@@ -58,6 +58,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecepieV
             super(itemView);
             mRecipeImageView = itemView.findViewById(R.id.iv_recipe_image);
             mRecipeNameView = itemView.findViewById(R.id.tv_recipe_name);
+            itemView.setOnClickListener(this);
         }
 
         void bind(Context context, int pos) {

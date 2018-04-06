@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:tools="http://schemas.android.com/tools"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
                                              android:layout_width="match_parent"
-                                             android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView
-        style="@style/IngredientTextViewStyle"
-        android:id="@+id/tv_name"
-        tools:text="Cream"
-        app:layout_constraintLeft_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-    />
-    <TextView
-        style="@style/IngredientTextViewStyle"
-        android:id="@+id/tv_qty"
-        tools:text="2"
-        app:layout_constraintTop_toTopOf="@id/tv_name"
-        app:layout_constraintRight_toLeftOf="@id/tv_measure"
-        android:layout_marginRight="8dp"
-    />
-    <TextView
-        style="@style/IngredientTextViewStyle"
-        android:id="@+id/tv_measure"
-        tools:text="TBSP"
-        app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_name"
-    />
-</android.support.constraint.ConstraintLayout>
+                                             android:layout_height="wrap_content"
+                                             android:orientation="horizontal"
+>
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2">
+        <TextView
+            style="@style/IngredientTextViewStyle"
+            android:id="@+id/tv_ingredient_name"
+            tools:text="Cream"
+            android:maxLines="2"
+        />
+    </FrameLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+        <TextView
+            style="@style/IngredientTextViewStyle"
+            android:id="@+id/tv_ingredient_qty"
+            tools:text="2"
+            android:layout_weight="1"
+            android:textAlignment="viewEnd"
+            android:maxLines="1"
+            android:layout_marginRight="5dp"
+        />
+        <TextView
+            style="@style/IngredientTextViewStyle"
+            android:id="@+id/tv_ingredient_measure"
+            tools:text="TBSP"
+            android:maxLines="1"
+        />
+    </LinearLayout>
+</LinearLayout>

@@ -1,6 +1,8 @@
 package com.udacity.nkonda.baketime.data;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import java.net.MalformedURLException;
@@ -11,7 +13,7 @@ import java.util.List;
  * Created by nkonda on 3/26/18.
  */
 
-public class RecipeStep {
+public class RecipeStep implements Parcelable {
     private final int mId;
     private final String mShortDesc;
     private final String mDesc;
@@ -57,4 +59,38 @@ public class RecipeStep {
             return null;
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.mId);
+        dest.writeString(this.mShortDesc);
+        dest.writeString(this.mDesc);
+        dest.writeString(this.mVideoUrl);
+        dest.writeString(this.mThumbnailUrl);
+    }
+
+    protected RecipeStep(Parcel in) {
+        this.mId = in.readInt();
+        this.mShortDesc = in.readString();
+        this.mDesc = in.readString();
+        this.mVideoUrl = in.readString();
+        this.mThumbnailUrl = in.readString();
+    }
+
+    public static final Parcelable.Creator<RecipeStep> CREATOR = new Parcelable.Creator<RecipeStep>() {
+        @Override
+        public RecipeStep createFromParcel(Parcel source) {
+            return new RecipeStep(source);
+        }
+
+        @Override
+        public RecipeStep[] newArray(int size) {
+            return new RecipeStep[size];
+        }
+    };
 }

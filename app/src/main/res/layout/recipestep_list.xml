@@ -6,8 +6,6 @@
                                         android:name="com.udacity.nkonda.baketime.recepiesteps.RecipeStepListFragment"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:layout_marginLeft="16dp"
-                                        android:layout_marginRight="16dp"
                                         app:layoutManager="LinearLayoutManager"
                                         tools:context="com.udacity.nkonda.baketime.recepiesteps.list.RecipeStepListActivity"
                                         tools:listitem="@layout/recipestep_list_item"/>
