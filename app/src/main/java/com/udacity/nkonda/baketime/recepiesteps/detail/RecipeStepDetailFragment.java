@@ -22,8 +22,8 @@ import com.udacity.nkonda.baketime.recepiesteps.dummy.DummyContent;
 import java.net.URL;
 
 /**
- * A fragment representing a single RecipeStep detail screen.
- * This fragment is either contained in a {@link RecipeStepListActivity}
+ * A mFragment representing a single RecipeStep detail screen.
+ * This mFragment is either contained in a {@link RecipeStepListActivity}
  * in two-pane mode (on tablets) or a {@link RecipeStepDetailActivity}
  * on handsets.
  */
@@ -56,7 +56,7 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
         }
 
         if (getArguments().containsKey(ARG_RECIPE_STEP_ID)) {
-            // Load the dummy content specified by the fragment
+            // Load the dummy content specified by the mFragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
 
@@ -123,5 +123,9 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     @Override
     public void showDesc(String desc) {
         mDescView.setText(desc);
+    }
+
+    public int getRecipeId() {
+        return mState.getLastRecipeId();
     }
 }

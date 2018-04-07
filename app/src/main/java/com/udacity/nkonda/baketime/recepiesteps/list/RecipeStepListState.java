@@ -1,18 +1,16 @@
 package com.udacity.nkonda.baketime.recepiesteps.list;
 
-import com.udacity.nkonda.baketime.data.Recipe;
-
 /**
  * Created by nkonda on 4/5/18.
  */
 
 public class RecipeStepListState implements RecipeStepListContract.State{
     private int mLastSelectedStepId;
-    private Recipe mRecipe;
+    private int mRecipeId;
 
-    public RecipeStepListState(int lastSelectedStepId, Recipe recipe) {
+    public RecipeStepListState(int lastSelectedStepId, int recipeId) {
         mLastSelectedStepId = lastSelectedStepId;
-        mRecipe = recipe;
+        mRecipeId = recipeId;
     }
 
     @Override
@@ -21,7 +19,7 @@ public class RecipeStepListState implements RecipeStepListContract.State{
     }
 
     @Override
-    public Recipe getLastRecipe() {
-        return mRecipe;
+    public int getLastRecipeId() {
+        return mRecipeId;
     }
 }

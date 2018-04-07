@@ -47,7 +47,7 @@ public class RecipesPresenter implements RecipesContract.Presenter{
     public void recipeSelected(Context context, int pos) {
         Intent intent = new Intent();
         intent.setClass(context, RecipeStepListActivity.class);
-        intent.putExtra(RecipeStepListActivity.ARGKEY_RECIPE, sRecipes.get(pos));
+        intent.putExtra(RecipeStepListActivity.ARGKEY_RECIPE_ID, sRecipes.get(pos).getId());
         context.startActivity(intent);
     }
 }

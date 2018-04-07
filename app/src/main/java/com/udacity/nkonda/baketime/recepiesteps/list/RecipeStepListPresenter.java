@@ -1,6 +1,7 @@
 package com.udacity.nkonda.baketime.recepiesteps.list;
 
 import com.udacity.nkonda.baketime.data.Recipe;
+import com.udacity.nkonda.baketime.data.source.RecipesRepository;
 
 /**
  * Created by nkonda on 3/25/18.
@@ -8,16 +9,20 @@ import com.udacity.nkonda.baketime.data.Recipe;
 
 public class RecipeStepListPresenter implements RecipeStepListContract.Presenter{
     private RecipeStepListContract.View mView;
+    private RecipesRepository mRepository;
 
-    private static int sLastSelectedStepId = 0;
+    private static int sLastSelectedStepId = -1;
+    private static int sLastRecipeId = -1;
     private static Recipe sRecipe;
 
-    public RecipeStepListPresenter(RecipeStepListContract.View view) {
+    public RecipeStepListPresenter(RecipeStepListContract.View view, RecipesRepository repository) {
         mView = view;
+        mRepository = repository;
     }
 
     @Override
     public void loadRecipeDetails() {
+        sRecipe = mRepository.getRecipe(sLastRecipeId);
         mView.showRecipeDetails(sRecipe);
     }
 
@@ -30,13 +35,13 @@ public class RecipeStepListPresenter implements RecipeStepListContract.Presenter
     public void start(RecipeStepListContract.State state) {
         if (state != null) {
             sLastSelectedStepId = state.getLastSelectedStepId();
-            sRecipe = state.getLastRecipe();
+            sLastRecipeId = state.getLastRecipeId();
         }
         loadRecipeDetails();
     }
 
     @Override
     public RecipeStepListContract.State getState() {
-        return new RecipeStepListState(sLastSelectedStepId, sRecipe);
+        return new RecipeStepListState(sLastSelectedStepId, sLastRecipeId);
     }
 }

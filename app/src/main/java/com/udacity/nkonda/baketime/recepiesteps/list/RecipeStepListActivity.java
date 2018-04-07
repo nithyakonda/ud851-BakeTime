@@ -17,6 +17,7 @@ import com.udacity.nkonda.baketime.R;
 import com.udacity.nkonda.baketime.data.Ingredient;
 import com.udacity.nkonda.baketime.data.Recipe;
 import com.udacity.nkonda.baketime.data.RecipeStep;
+import com.udacity.nkonda.baketime.data.source.RecipesRepository;
 import com.udacity.nkonda.baketime.recepiesteps.detail.RecipeStepDetailActivity;
 import com.udacity.nkonda.baketime.recepiesteps.detail.RecipeStepDetailFragment;
 
@@ -31,8 +32,8 @@ import java.util.List;
  * item details side-by-side using two vertical panes.
  */
 public class RecipeStepListActivity extends BaseActivity implements RecipeStepListContract.View{
-    public static final String ARGKEY_RECIPE = "ARGKEY_RECIPE";
-    private static final String SAVEKEY_RECIPE = "SAVEKEY_RECIPE";
+    public static final String ARGKEY_RECIPE_ID = "ARGKEY_RECIPE_ID";
+    private static final String SAVEKEY_RECIPE_ID = "SAVEKEY_RECIPE_ID";
     private static final String SAVEKEY_STEP_ID = "SAVEKEY_STEP_ID";
 
     private RecyclerView mRecyclerView;
@@ -60,15 +61,15 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
 
         mRecyclerView = findViewById(R.id.recipestep_list);
         assert mRecyclerView != null;
-        mPresenter = new RecipeStepListPresenter(this);
+        mPresenter = new RecipeStepListPresenter(this, new RecipesRepository(this));
         if (savedInstanceState == null) {
-            Recipe recipe = (Recipe) getIntent().getParcelableExtra(ARGKEY_RECIPE);
-            getSupportActionBar().setTitle(recipe.getName());
+            int recipeId = getIntent().getIntExtra(ARGKEY_RECIPE_ID, -1);
+
             mState = new RecipeStepListState(0,
-                    recipe);
+                    recipeId);
         } else {
             mState = new RecipeStepListState(savedInstanceState.getInt(SAVEKEY_STEP_ID),
-                    (Recipe) savedInstanceState.getParcelable(SAVEKEY_RECIPE));
+                    savedInstanceState.getInt(SAVEKEY_RECIPE_ID));
         }
     }
 
@@ -83,11 +84,12 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
         super.onSaveInstanceState(outState);
         RecipeStepListState state = (RecipeStepListState) mPresenter.getState();
         outState.putInt(SAVEKEY_STEP_ID, state.getLastSelectedStepId());
-        outState.putParcelable(SAVEKEY_RECIPE, state.getLastRecipe());
+        outState.putInt(SAVEKEY_RECIPE_ID, state.getLastRecipeId());
     }
 
     @Override
     public void showRecipeDetails(Recipe recipe) {
+        getSupportActionBar().setTitle(recipe.getName());
         mRecyclerView.setAdapter(new RecipeStepsAdapter(this, recipe, mTwoPane));
     }
 

@@ -21,6 +21,6 @@ public interface RecipeStepListContract {
 
     interface State extends BaseState {
         int getLastSelectedStepId();
-        Recipe getLastRecipe();
+        int getLastRecipeId();
     }
 }
