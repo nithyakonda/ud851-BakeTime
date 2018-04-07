@@ -31,7 +31,7 @@ import java.util.List;
  * item details side-by-side using two vertical panes.
  */
 public class RecipeStepListActivity extends BaseActivity implements RecipeStepListContract.View{
-    private static final String ARGKEY_RECIPE = "ARGKEY_RECIPE";
+    public static final String ARGKEY_RECIPE = "ARGKEY_RECIPE";
     private static final String SAVEKEY_RECIPE = "SAVEKEY_RECIPE";
     private static final String SAVEKEY_STEP_ID = "SAVEKEY_STEP_ID";
 
@@ -108,6 +108,7 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
                     arguments.putInt(RecipeStepDetailFragment.ARG_RECIPE_STEP_ID, recipeStepId);
+                    arguments.putInt(RecipeStepDetailFragment.ARG_RECIPE_ID, mRecipe.getId());
                     RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
@@ -117,6 +118,7 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
                     Context context = view.getContext();
                     Intent intent = new Intent(context, RecipeStepDetailActivity.class);
                     intent.putExtra(RecipeStepDetailFragment.ARG_RECIPE_STEP_ID, recipeStepId);
+                    intent.putExtra(RecipeStepDetailFragment.ARG_RECIPE_ID, mRecipe.getId());
 
                     context.startActivity(intent);
                 }

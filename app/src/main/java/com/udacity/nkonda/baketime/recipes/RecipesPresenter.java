@@ -15,7 +15,6 @@ import java.util.List;
  */
 
 public class RecipesPresenter implements RecipesContract.Presenter{
-    private static final String ARGKEY_RECIPE = "ARGKEY_RECIPE";
 
     private RecipesContract.View mView;
     private RecipesRepository mRepository;
@@ -48,7 +47,7 @@ public class RecipesPresenter implements RecipesContract.Presenter{
     public void recipeSelected(Context context, int pos) {
         Intent intent = new Intent();
         intent.setClass(context, RecipeStepListActivity.class);
-        intent.putExtra(ARGKEY_RECIPE, sRecipes.get(pos));
+        intent.putExtra(RecipeStepListActivity.ARGKEY_RECIPE, sRecipes.get(pos));
         context.startActivity(intent);
     }
 }

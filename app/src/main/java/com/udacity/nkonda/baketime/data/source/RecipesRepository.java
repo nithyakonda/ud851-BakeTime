@@ -47,6 +47,14 @@ public class RecipesRepository implements RecipesDataSource{
         return null;
     }
 
+    @Override
+    public Recipe getRecipe(int id) {
+        if (sRecipes == null) {
+            sRecipes = getRecipes();
+        }
+        return sRecipes.get(id);
+    }
+
     private String getRecipeJsonString() {
         InputStream is = mContext.getResources().openRawResource(RECIPE_JSON_RES_ID);
         Writer writer = new StringWriter();

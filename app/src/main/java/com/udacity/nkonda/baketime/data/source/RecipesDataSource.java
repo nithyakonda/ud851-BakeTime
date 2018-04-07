@@ -14,4 +14,5 @@ public interface RecipesDataSource {
     List<Recipe> getRecipes();
     List<Ingredient> getIngredients(int recipeId);
     List<RecipeStep> getRecipeStepDetail(int recipeStepId);
+    Recipe getRecipe(int id);
 }
