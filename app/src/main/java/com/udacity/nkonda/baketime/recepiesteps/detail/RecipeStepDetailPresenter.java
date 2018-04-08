@@ -29,10 +29,11 @@ public class RecipeStepDetailPresenter implements RecipeStepDetailContract.Prese
     public void load() {
         if (sRecipe == null)
             sRecipe = mRepository.getRecipe(sLastRecipeId);
-        RecipeStep step = sRecipe.getRecipeSteps().get(sLastRecipeId);
+        RecipeStep step = sRecipe.getRecipeSteps().get(sLastSelectedStepId);
         if (step.getVideoUrl() != null) {
             mView.showMedia(step.getVideoUrl());
         }
+        mView.setTitle(step.getShortDesc());
         mView.showDesc(step.getDesc());
     }
 

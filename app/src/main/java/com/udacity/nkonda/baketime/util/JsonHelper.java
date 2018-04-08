@@ -9,7 +9,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nkonda on 3/26/18.
@@ -32,13 +34,14 @@ public class JsonHelper {
     private static final String VIDEO_URL_JSON = "videoURL";
     private static final String THUMBNAIL_URL_JSON = "thumbnailURL";
 
-    public static List<Recipe> parseRecipesJsonStr(String recipesJsonStr) {
-        List<Recipe> recipes = new ArrayList<>();
+    public static Map<Integer, Recipe> parseRecipesJsonStr(String recipesJsonStr) {
+        Map<Integer, Recipe> recipes = new HashMap<>();
         try {
             JSONArray recipesJsonArr = new JSONArray(recipesJsonStr);
             for (int i = 0; i < recipesJsonArr.length(); i++) {
                 JSONObject recipeJson = recipesJsonArr.getJSONObject(i);
-                recipes.add(new Recipe(
+                recipes.put(recipeJson.getInt(ID_JSON),
+                        new Recipe(
                         recipeJson.getInt(ID_JSON),
                         recipeJson.getString(NAME_JSON),
                         parseIngredientsJsonArr(recipeJson.getJSONArray(INGREDIENTS_JSON)),

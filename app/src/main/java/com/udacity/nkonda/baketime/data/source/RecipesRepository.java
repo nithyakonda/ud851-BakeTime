@@ -15,7 +15,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nkonda on 3/25/18.
@@ -25,7 +27,7 @@ public class RecipesRepository implements RecipesDataSource{
     private static final String TAG = RecipesRepository.class.getSimpleName();
     private static final int RECIPE_JSON_RES_ID = R.raw.recipes_json;
 
-    private static List<Recipe> sRecipes;
+    private static Map<Integer, Recipe> sRecipes;
     private final Context mContext;
 
     public RecipesRepository(Context context) {
@@ -34,7 +36,8 @@ public class RecipesRepository implements RecipesDataSource{
 
     @Override
     public List<Recipe> getRecipes() {
-        return JsonHelper.parseRecipesJsonStr(getRecipeJsonString());
+        sRecipes = JsonHelper.parseRecipesJsonStr(getRecipeJsonString());
+        return new ArrayList<>(sRecipes.values());
     }
 
     @Override
@@ -50,7 +53,7 @@ public class RecipesRepository implements RecipesDataSource{
     @Override
     public Recipe getRecipe(int id) {
         if (sRecipes == null) {
-            sRecipes = getRecipes();
+            sRecipes = JsonHelper.parseRecipesJsonStr(getRecipeJsonString());
         }
         return sRecipes.get(id);
     }

@@ -15,6 +15,7 @@ public interface RecipeStepDetailContract {
     interface View extends BaseView {
         void showMedia(URL url);
         void showDesc(String desc);
+        void setTitle(String shortDesc);
     }
 
     interface Presenter extends BasePresenter<RecipeStepDetailState> {
