@@ -4,8 +4,6 @@ import com.udacity.nkonda.baketime.BasePresenter;
 import com.udacity.nkonda.baketime.BaseState;
 import com.udacity.nkonda.baketime.BaseView;
 
-import java.net.URL;
-
 /**
  * Created by nkonda on 3/25/18.
  */
@@ -13,9 +11,11 @@ import java.net.URL;
 public interface RecipeStepDetailContract {
 
     interface View extends BaseView {
-        void showMedia(URL url);
+        void showMedia(String url);
         void showDesc(String desc);
         void setTitle(String shortDesc);
+        void enableNext(boolean enable);
+        void enablePrev(boolean enable);
     }
 
     interface Presenter extends BasePresenter<RecipeStepDetailState> {

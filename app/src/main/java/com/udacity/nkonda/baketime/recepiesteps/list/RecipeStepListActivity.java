@@ -1,7 +1,6 @@
 package com.udacity.nkonda.baketime.recepiesteps.list;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,7 +18,6 @@ import com.udacity.nkonda.baketime.data.Recipe;
 import com.udacity.nkonda.baketime.data.RecipeStep;
 import com.udacity.nkonda.baketime.data.source.RecipesRepository;
 import com.udacity.nkonda.baketime.recepiesteps.detail.RecipeStepDetailActivity;
-import com.udacity.nkonda.baketime.recepiesteps.detail.RecipeStepDetailFragment;
 
 import java.util.List;
 
@@ -37,6 +35,7 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
     private static final String SAVEKEY_STEP_ID = "SAVEKEY_STEP_ID";
 
     private RecyclerView mRecyclerView;
+    private View mLastSelView;
 
     private boolean mTwoPane;
     private RecipeStepListPresenter mPresenter;
@@ -52,10 +51,6 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (findViewById(R.id.recipestep_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
             mTwoPane = true;
         }
 
@@ -79,6 +74,7 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
         mPresenter.start(mState);
     }
 
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -90,7 +86,28 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
     @Override
     public void showRecipeDetails(Recipe recipe) {
         getSupportActionBar().setTitle(recipe.getName());
-        mRecyclerView.setAdapter(new RecipeStepsAdapter(this, recipe, mTwoPane));
+        RecipeStepsAdapter adapter = new RecipeStepsAdapter(this, recipe, mState, mTwoPane);
+        adapter.setOnItemSelectedListener(new RecipeStepsAdapter.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(View view) {
+                int recipeStepId = (Integer) view.getTag();
+                if (recipeStepId == -1) return;
+                mPresenter.onStepSelected(RecipeStepListActivity.this, recipeStepId, mTwoPane);
+                if (mTwoPane) {
+                    if (mLastSelView != null) {
+                        mLastSelView.setSelected(false);
+                    }
+                    mLastSelView = view;
+                }
+                view.setSelected(true);
+            }
+        });
+
+        mRecyclerView.setAdapter(adapter);
+
+        if (mTwoPane) {
+            mPresenter.onStepSelected(this, mState.getLastSelectedStepId(), mTwoPane);
+        }
     }
 
     public static class RecipeStepsAdapter
@@ -101,38 +118,22 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
         private final RecipeStepListActivity mParentActivity;
         private final Recipe mRecipe;
         private final boolean mTwoPane;
+        private final RecipeStepListContract.State mState;
         private Context mContext;
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int recipeStepId = (Integer) view.getTag();
-                if (recipeStepId == -1) return;
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putInt(RecipeStepDetailFragment.ARG_RECIPE_STEP_ID, recipeStepId);
-                    arguments.putInt(RecipeStepDetailFragment.ARG_RECIPE_ID, mRecipe.getId());
-                    RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.recipestep_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, RecipeStepDetailActivity.class);
-                    intent.putExtra(RecipeStepDetailFragment.ARG_RECIPE_STEP_ID, recipeStepId);
-                    intent.putExtra(RecipeStepDetailFragment.ARG_RECIPE_ID, mRecipe.getId());
-
-                    context.startActivity(intent);
-                }
-            }
-        };
+        private OnItemSelectedListener mOnClickListener;
 
         RecipeStepsAdapter(RecipeStepListActivity parent,
                 Recipe recipe,
+                RecipeStepListContract.State state,
                 boolean twoPane) {
             mRecipe = recipe;
             mParentActivity = parent;
+            mState = state;
             mTwoPane = twoPane;
+        }
+
+        public void setOnItemSelectedListener(OnItemSelectedListener onClickListener) {
+            mOnClickListener = onClickListener;
         }
 
         @Override
@@ -167,7 +168,6 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
                 default:
                     throw new IllegalArgumentException("Invalid view type, value of " + viewType);
             }
-            holder.itemView.setOnClickListener(mOnClickListener);
         }
 
         @Override
@@ -184,7 +184,11 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
             }
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        public interface OnItemSelectedListener {
+            public void onItemSelected(View view);
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             final TextView mStepDescView;
             final LinearLayout mIngredientsLayout;
 
@@ -192,6 +196,7 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
                 super(view);
                 mStepDescView = (TextView) view.findViewById(R.id.tv_short_desc);
                 mIngredientsLayout = view.findViewById(R.id.ll_ingredients);
+                view.setOnClickListener(this);
             }
 
             void bindIngredientsView(Context context, List<Ingredient> ingredients) {
@@ -214,6 +219,15 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
                 RecipeStep step = mRecipe.getRecipeSteps().get(pos);
                 mStepDescView.setText(step.getShortDesc());
                 itemView.setTag(step.getId());
+                if (mTwoPane && step.getId() == mState.getLastSelectedStepId()) {
+                    itemView.setSelected(true);
+                    itemView.callOnClick();
+                }
+            }
+
+            @Override
+            public void onClick(View v) {
+                mOnClickListener.onItemSelected(v);
             }
         }
     }

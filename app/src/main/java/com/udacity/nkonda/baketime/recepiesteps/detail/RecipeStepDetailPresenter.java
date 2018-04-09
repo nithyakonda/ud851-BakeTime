@@ -1,12 +1,8 @@
 package com.udacity.nkonda.baketime.recepiesteps.detail;
 
-import com.udacity.nkonda.baketime.BasePresenter;
-import com.udacity.nkonda.baketime.BaseState;
-import com.udacity.nkonda.baketime.BaseView;
 import com.udacity.nkonda.baketime.data.Recipe;
 import com.udacity.nkonda.baketime.data.RecipeStep;
 import com.udacity.nkonda.baketime.data.source.RecipesRepository;
-import com.udacity.nkonda.baketime.recepiesteps.list.RecipeStepListContract;
 
 /**
  * Created by nkonda on 3/25/18.
@@ -33,16 +29,17 @@ public class RecipeStepDetailPresenter implements RecipeStepDetailContract.Prese
         if (step.getVideoUrl() != null) {
             mView.showMedia(step.getVideoUrl());
         }
-        mView.setTitle(step.getShortDesc());
         mView.showDesc(step.getDesc());
+        enableNavButtons();
     }
 
     @Override
     public void onNextButtonClicked() {
-        if (sLastSelectedStepId < sRecipe.getRecipeSteps().size()) {
+        if (sLastSelectedStepId < sRecipe.getRecipeSteps().size() - 1) {
             sLastSelectedStepId++;
             load();
         }
+        enableNavButtons();
     }
 
     @Override
@@ -51,6 +48,7 @@ public class RecipeStepDetailPresenter implements RecipeStepDetailContract.Prese
             sLastSelectedStepId--;
             load();
         }
+        enableNavButtons();
     }
 
     @Override
@@ -60,10 +58,24 @@ public class RecipeStepDetailPresenter implements RecipeStepDetailContract.Prese
             sLastRecipeId = state.getLastRecipeId();
         }
         load();
+        mView.setTitle(sRecipe.getName());
     }
 
     @Override
     public RecipeStepDetailState getState() {
         return new RecipeStepDetailState(sLastRecipeId, sLastSelectedStepId);
+    }
+
+    private void enableNavButtons() {
+        if (sLastSelectedStepId > 0 && sLastSelectedStepId < sRecipe.getRecipeSteps().size() - 1) {
+            mView.enableNext(true);
+            mView.enablePrev(true);
+        } else if (sLastSelectedStepId == 0) {
+            mView.enablePrev(false);
+            mView.enableNext(true);
+        } else if (sLastSelectedStepId == sRecipe.getRecipeSteps().size() - 1) {
+            mView.enablePrev(true);
+            mView.enableNext(false);
+        }
     }
 }

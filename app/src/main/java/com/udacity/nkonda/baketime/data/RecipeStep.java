@@ -41,13 +41,8 @@ public class RecipeStep implements Parcelable {
     }
 
     @Nullable
-    public URL getVideoUrl() {
-        try {
-            return new URL(Uri.parse(mVideoUrl).toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String getVideoUrl() {
+        return mVideoUrl;
     }
 
     @Nullable

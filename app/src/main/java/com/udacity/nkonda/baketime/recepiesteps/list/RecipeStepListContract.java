@@ -1,5 +1,7 @@
 package com.udacity.nkonda.baketime.recepiesteps.list;
 
+import android.content.Context;
+
 import com.udacity.nkonda.baketime.BasePresenter;
 import com.udacity.nkonda.baketime.BaseState;
 import com.udacity.nkonda.baketime.BaseView;
@@ -16,7 +18,7 @@ public interface RecipeStepListContract {
 
     interface Presenter extends BasePresenter<State> {
         void loadRecipeDetails();
-        void onStepSelected(int recipeStepId);
+        void onStepSelected(Context context, int recipeStepId, boolean isTwoPane);
     }
 
     interface State extends BaseState {

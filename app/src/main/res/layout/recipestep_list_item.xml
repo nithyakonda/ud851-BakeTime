@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="?attr/listPreferredItemHeight"
               android:orientation="horizontal"
-              android:background="@drawable/recipestep_bg"
+              android:background="@drawable/selector_recipestep_list_item"
               android:padding="8dp"
               android:layout_margin="2dp"
 >
