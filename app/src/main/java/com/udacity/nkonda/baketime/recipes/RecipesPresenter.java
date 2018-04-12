@@ -44,10 +44,10 @@ public class RecipesPresenter implements RecipesContract.Presenter{
     }
 
     @Override
-    public void recipeSelected(Context context, int pos) {
+    public void recipeSelected(Context context, int recipeId) {
         Intent intent = new Intent();
         intent.setClass(context, RecipeStepListActivity.class);
-        intent.putExtra(RecipeStepListActivity.ARGKEY_RECIPE_ID, sRecipes.get(pos).getId());
+        intent.putExtra(RecipeStepListActivity.ARGKEY_RECIPE_ID, recipeId);
         context.startActivity(intent);
     }
 }

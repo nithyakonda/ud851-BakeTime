@@ -22,10 +22,16 @@ public class RecipeStepListPresenter implements RecipeStepListContract.Presenter
     private static int sLastSelectedStepId = -1;
     private static int sLastRecipeId = -1;
     private static Recipe sRecipe;
+    private static boolean sRecreatedOnOrientationChange;
 
     public RecipeStepListPresenter(RecipeStepListContract.View view, RecipesRepository repository) {
         mView = view;
         mRepository = repository;
+    }
+
+    @Override
+    public void recreatedOnOrientationChange(boolean recreated) {
+        sRecreatedOnOrientationChange = recreated;
     }
 
     @Override
@@ -38,14 +44,16 @@ public class RecipeStepListPresenter implements RecipeStepListContract.Presenter
     public void onStepSelected(Context context, int recipeStepId, boolean isTwoPane) {
         sLastSelectedStepId = recipeStepId;
         if (isTwoPane) {
-            Bundle arguments = new Bundle();
-            arguments.putInt(RecipeStepDetailFragment.ARG_RECIPE_STEP_ID, sLastSelectedStepId);
-            arguments.putInt(RecipeStepDetailFragment.ARG_RECIPE_ID, sRecipe.getId());
-            RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
-            fragment.setArguments(arguments);
-            ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.recipestep_detail_container, fragment)
-                    .commit();
+            if (!sRecreatedOnOrientationChange) {
+                Bundle arguments = new Bundle();
+                arguments.putInt(RecipeStepDetailFragment.ARG_RECIPE_STEP_ID, sLastSelectedStepId);
+                arguments.putInt(RecipeStepDetailFragment.ARG_RECIPE_ID, sRecipe.getId());
+                RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
+                fragment.setArguments(arguments);
+                ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.recipestep_detail_container, fragment)
+                        .commit();
+            }
         } else {
             Intent intent = new Intent(context, RecipeStepDetailActivity.class);
             intent.putExtra(RecipeStepDetailFragment.ARG_RECIPE_STEP_ID, sLastSelectedStepId);

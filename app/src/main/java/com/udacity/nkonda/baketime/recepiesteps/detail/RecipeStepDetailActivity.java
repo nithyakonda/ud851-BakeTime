@@ -21,6 +21,7 @@ import com.udacity.nkonda.baketime.recepiesteps.list.RecipeStepListActivity;
  * in a {@link RecipeStepListActivity}.
  */
 public class RecipeStepDetailActivity extends BaseActivity {
+    private static final String FRAGMENT_TAG = "RECIPE_STEP_DETAIL_FRAGMENT";
     RecipeStepDetailFragment mFragment;
 
     @Override
@@ -29,8 +30,10 @@ public class RecipeStepDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_recipestep_detail);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         if (savedInstanceState == null) {
             // Create the detail mFragment and add it to the activity
@@ -43,7 +46,7 @@ public class RecipeStepDetailActivity extends BaseActivity {
             mFragment = new RecipeStepDetailFragment();
             mFragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.recipestep_detail_container, mFragment)
+                    .add(R.id.recipestep_detail_container, mFragment, FRAGMENT_TAG)
                     .commit();
         }
     }
@@ -53,7 +56,9 @@ public class RecipeStepDetailActivity extends BaseActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             Intent intent = new Intent(this, RecipeStepListActivity.class);
-            // TODO: 4/10/18 detail->landscape, nav back mFragment null
+            if (mFragment == null) {
+                mFragment = (RecipeStepDetailFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+            }
             intent.putExtra(RecipeStepListActivity.ARGKEY_RECIPE_ID, mFragment.getRecipeId());
             navigateUpTo(intent);
             return true;

@@ -23,14 +23,14 @@ public class RecipeStepDetailPresenter implements RecipeStepDetailContract.Prese
 
     @Override
     public void load() {
-        if (sRecipe == null)
+        if (sRecipe == null || (sRecipe != null && sRecipe.getId() != sLastRecipeId))
             sRecipe = mRepository.getRecipe(sLastRecipeId);
         RecipeStep step = sRecipe.getRecipeSteps().get(sLastSelectedStepId);
-        if (!step.getVideoUrl().isEmpty() && mView.isOnline()) {
-            mView.showMedia(step.getVideoUrl());
-        } else {
-            mView.showNoMedia();
-        }
+            if (!step.getVideoUrl().isEmpty() && mView.isOnline()) {
+                mView.showMedia(step.getVideoUrl());
+            } else {
+                mView.showNoMedia();
+            }
         mView.showDesc(step.getDesc());
         enableNavButtons();
     }

@@ -33,6 +33,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        tools:text="Crack the eggs"/>
+        tools:text="@string/dummy_recipe_step_desc"/>
 
 </android.support.constraint.ConstraintLayout>

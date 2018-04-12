@@ -13,7 +13,7 @@
         <TextView
             style="@style/IngredientTextViewStyle"
             android:id="@+id/tv_ingredient_name"
-            tools:text="Cream"
+            tools:text="@string/dummy_ingredient"
             android:maxLines="2"
         />
     </FrameLayout>
@@ -25,7 +25,7 @@
         <TextView
             style="@style/IngredientTextViewStyle"
             android:id="@+id/tv_ingredient_qty"
-            tools:text="2"
+            tools:text="@string/dummy_qty"
             android:layout_weight="1"
             android:textAlignment="viewEnd"
             android:maxLines="1"
@@ -34,7 +34,7 @@
         <TextView
             style="@style/IngredientTextViewStyle"
             android:id="@+id/tv_ingredient_measure"
-            tools:text="TBSP"
+            tools:text="@string/dummy_measure"
             android:maxLines="1"
         />
     </LinearLayout>

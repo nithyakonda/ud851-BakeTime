@@ -26,7 +26,7 @@
                 android:layout_gravity="bottom"
                 android:gravity="center"
                 android:textAlignment="viewEnd"
-                tools:text="Brownies"
+                tools:text="@string/dummy_recipe"
                 android:background="@drawable/recipe_text_bg"
                 android:textColor="@android:color/white"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"/>

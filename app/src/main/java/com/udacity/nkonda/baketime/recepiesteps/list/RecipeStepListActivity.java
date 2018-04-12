@@ -62,9 +62,11 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
 
             mState = new RecipeStepListState(0,
                     recipeId);
+            mPresenter.recreatedOnOrientationChange(false);
         } else {
             mState = new RecipeStepListState(savedInstanceState.getInt(SAVEKEY_STEP_ID),
                     savedInstanceState.getInt(SAVEKEY_RECIPE_ID));
+            mPresenter.recreatedOnOrientationChange(true);
         }
     }
 
@@ -160,7 +162,7 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
             int viewType = getItemViewType(position);
             switch (viewType) {
                 case VIEW_TYPE_INGREDIENTS:
-                    holder.bindIngredientsView(mContext, mRecipe.getIngredients());
+                    holder.bindIngredientsView(mContext, mRecipe.getIngredients(), mRecipe.getServings());
                     break;
                 case VIEW_TYPE_RECIPE_STEP:
                     holder.bindRecipeStep(position - 1);
@@ -190,18 +192,21 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
 
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             final TextView mStepDescView;
+            final TextView mServingsView;
             final LinearLayout mIngredientsLayout;
 
             ViewHolder(View view) {
                 super(view);
                 mStepDescView = (TextView) view.findViewById(R.id.tv_short_desc);
+                mServingsView = (TextView) view.findViewById(R.id.tv_servings);
                 mIngredientsLayout = view.findViewById(R.id.ll_ingredients);
                 view.setOnClickListener(this);
             }
 
-            void bindIngredientsView(Context context, List<Ingredient> ingredients) {
+            void bindIngredientsView(Context context, List<Ingredient> ingredients, int servings) {
                 LayoutInflater inflater = LayoutInflater.from(context);
                 itemView.setTag(-1);
+                mServingsView.setText(String.valueOf(servings));
                 for (Ingredient ingredient : ingredients) {
                     View ingredientListItemView = inflater.inflate(R.layout.ingredient_item_layout, null);
                     TextView tvName = ingredientListItemView.findViewById(R.id.tv_ingredient_name);

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.udacity.nkonda.baketime.BaseActivity;
 import com.udacity.nkonda.baketime.R;
@@ -36,8 +37,8 @@ public class RecipesActivity extends BaseActivity implements RecipesContract.Vie
         mAdapter = new RecipesAdapter();
         mAdapter.setOnItemClickedListener(new RecipesAdapter.OnItemClickedListener() {
             @Override
-            public void onClick(int position) {
-                mPresenter.recipeSelected(RecipesActivity.this, position);
+            public void onClick(View v) {
+                mPresenter.recipeSelected(RecipesActivity.this, (Integer) v.getTag());
             }
         });
         mRecipesView.setLayoutManager(layoutManager);

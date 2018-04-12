@@ -41,6 +41,7 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
 
     public static final String ARG_RECIPE_STEP_ID = "ARG_RECIPE_STEP_ID";
     public static final String ARG_RECIPE_ID = "ARG_RECIPE_ID";
+    private static final String ARG_PLAYBACK_POSITION = "ARG_PLAYBACK_POSITION";
 
     private RecipeStepDetailState mState;
     private RecipeStepDetailPresenter mPresenter;
@@ -63,6 +64,7 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPresenter = new RecipeStepDetailPresenter(this, new RecipesRepository(getActivity()));
         if (savedInstanceState == null) {
             mState = new RecipeStepDetailState(
                     getArguments().getInt(ARG_RECIPE_ID),
@@ -73,8 +75,8 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
                     savedInstanceState.getInt(ARG_RECIPE_ID),
                     savedInstanceState.getInt(ARG_RECIPE_STEP_ID)
             );
+            mPlaybackPosition = savedInstanceState.getLong(ARG_PLAYBACK_POSITION);
         }
-        mPresenter = new RecipeStepDetailPresenter(this, new RecipesRepository(getActivity()));
         mMediaPlayerStateListener = new MediaPlayerStateListener();
     }
 
@@ -112,41 +114,27 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     @Override
     public void onStart() {
         super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer();
-        }
+        initializePlayer();
         mPresenter.start(mState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if ((Util.SDK_INT <= 23 || mPlayer == null)) {
-            initializePlayer();
-        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (Util.SDK_INT <= 23) {
-            releasePlayer();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (Util.SDK_INT > 23) {
-            releasePlayer();
-        }
+        releasePlayer();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(ARG_RECIPE_ID, mState.getLastRecipeId());
-        outState.putInt(ARG_RECIPE_STEP_ID, mState.getLastSelectedStepId());
+        RecipeStepDetailState state = mPresenter.getState();
+        outState.putInt(ARG_RECIPE_ID, state.getLastRecipeId());
+        outState.putInt(ARG_RECIPE_STEP_ID, state.getLastSelectedStepId());
+        if (mPlayer != null) {
+            outState.putLong(ARG_PLAYBACK_POSITION, mPlayer.getCurrentPosition());
+        } else {
+            outState.putLong(ARG_PLAYBACK_POSITION, mPlaybackPosition);
+        }
     }
 
     @Override
@@ -169,7 +157,6 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
                 new DefaultHttpDataSourceFactory("exoplayer-baketime")).
                 createMediaSource(uri);
         mPlayer.prepare(mediaSource, true, false);
-        mPlayer.setPlayWhenReady(mPlayWhenReady);
     }
 
     @Override
@@ -187,9 +174,11 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     }
 
     @Override
-    public void setTitle(String shortDesc) {
+    public void setTitle(String recipeName) {
         AppCompatActivity activity = (AppCompatActivity) this.getActivity();
-        activity.getSupportActionBar().setTitle(shortDesc);
+        if (activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().setTitle(recipeName);
+        }
     }
 
     @Override
@@ -227,7 +216,8 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
                     new DefaultTrackSelector(), new DefaultLoadControl());
             mSimpleExoPlayerView.setPlayer(mPlayer);
             mPlayer.addListener(mMediaPlayerStateListener);
-            mPlayer.seekTo(mCurrentWindow, mPlaybackPosition);
+            mPlayer.seekTo(mPlaybackPosition);
+            mPlayer.setPlayWhenReady(mPlayWhenReady);
         }
     }
 

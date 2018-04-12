@@ -63,6 +63,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecepieV
 
         void bind(Context context, int pos) {
             Recipe recipe = mRecipes.get(pos);
+            itemView.setTag(recipe.getId());
             mRecipeNameView.setText(recipe.getName());
             mRecipeImageView.setImageResource(recipe.getImageResId());
         }
@@ -71,12 +72,12 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecepieV
         public void onClick(View v) {
             int pos = getAdapterPosition();
             if (mListener != null) {
-                mListener.onClick(pos);
+                mListener.onClick(v);
             }
         }
     }
 
     public interface OnItemClickedListener {
-        public void onClick(int position);
+        public void onClick(View v);
     }
 }

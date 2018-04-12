@@ -19,6 +19,7 @@ public interface RecipeStepListContract {
     interface Presenter extends BasePresenter<State> {
         void loadRecipeDetails();
         void onStepSelected(Context context, int recipeStepId, boolean isTwoPane);
+        void recreatedOnOrientationChange(boolean recreated);
     }
 
     interface State extends BaseState {
