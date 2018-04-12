@@ -4,27 +4,29 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.udacity.nkonda.baketime.R;
 import com.udacity.nkonda.baketime.data.source.RecipesRepository;
 import com.udacity.nkonda.baketime.recepiesteps.list.RecipeStepListActivity;
@@ -42,11 +44,18 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
 
     private RecipeStepDetailState mState;
     private RecipeStepDetailPresenter mPresenter;
+    private MediaPlayerStateListener mMediaPlayerStateListener;
 
     private TextView mDescView;
+    private View mDefaultVideoView;
     private SimpleExoPlayerView mSimpleExoPlayerView;
     private FloatingActionButton mNextStep;
     private FloatingActionButton mPrevStep;
+
+    private SimpleExoPlayer mPlayer;
+    private int mCurrentWindow = 0;
+    private long mPlaybackPosition = 0;
+    private boolean mPlayWhenReady = true;
 
     public RecipeStepDetailFragment() {
     }
@@ -66,12 +75,14 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
             );
         }
         mPresenter = new RecipeStepDetailPresenter(this, new RecipesRepository(getActivity()));
+        mMediaPlayerStateListener = new MediaPlayerStateListener();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
+        mDefaultVideoView = rootView.findViewById(R.id.no_video_background);
         mSimpleExoPlayerView = rootView.findViewById(R.id.exo_media);
         mSimpleExoPlayerView.requestFocus();
 
@@ -101,7 +112,34 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     @Override
     public void onStart() {
         super.onStart();
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
+        }
         mPresenter.start(mState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || mPlayer == null)) {
+            initializePlayer();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
 
     @Override
@@ -113,7 +151,6 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
 
     @Override
     public boolean isOnline() {
-        // TODO: 4/7/18 use this
         ConnectivityManager cm =
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -122,21 +159,24 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
 
     @Override
     public void showMedia(String url) {
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
+        mPlayer.stop();
+        if (mSimpleExoPlayerView.getVisibility() == View.GONE) {
+            mDefaultVideoView.setVisibility(View.GONE);
+            mSimpleExoPlayerView.setVisibility(View.VISIBLE);
+        }
+        Uri uri = Uri.parse(url);
+        MediaSource mediaSource = new ExtractorMediaSource.Factory(
+                new DefaultHttpDataSourceFactory("exoplayer-baketime")).
+                createMediaSource(uri);
+        mPlayer.prepare(mediaSource, true, false);
+        mPlayer.setPlayWhenReady(mPlayWhenReady);
+    }
 
-        mSimpleExoPlayerView.setPlayer(player);
-
-        player.setPlayWhenReady(true);
-
-        DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-
-//        MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(url),
-//                mediaDataSourceFactory, extractorsFactory, null, null);
-//        player.prepare(mediaSource);
+    @Override
+    public void showNoMedia() {
+        mPlayer.stop();
+        mSimpleExoPlayerView.setVisibility(View.GONE);
+        mDefaultVideoView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -179,5 +219,52 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
             color = R.color.colorDisabled;
         }
         btn.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(color)));
+    }
+
+    private void initializePlayer() {
+        if (mPlayer == null) {
+            mPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getActivity()),
+                    new DefaultTrackSelector(), new DefaultLoadControl());
+            mSimpleExoPlayerView.setPlayer(mPlayer);
+            mPlayer.addListener(mMediaPlayerStateListener);
+            mPlayer.seekTo(mCurrentWindow, mPlaybackPosition);
+        }
+    }
+
+    private MediaSource buildMediaSource(Uri uri) {
+        return new ExtractorMediaSource.Factory(new DefaultHttpDataSourceFactory("exoplayer-baketime"))
+                .createMediaSource(uri);
+    }
+
+    private void releasePlayer() {
+        if (mPlayer != null) {
+            mPlaybackPosition = mPlayer.getCurrentPosition();
+            mCurrentWindow = mPlayer.getCurrentWindowIndex();
+            mPlayWhenReady = mPlayer.getPlayWhenReady();
+            mPlayer.release();
+            mPlayer = null;
+        }
+    }
+
+    private class MediaPlayerStateListener extends Player.DefaultEventListener  {
+
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            switch (playbackState) {
+                case Player.STATE_IDLE:
+                    break;
+                case Player.STATE_BUFFERING:
+                    break;
+                case Player.STATE_READY:
+                    break;
+                case Player.STATE_ENDED:
+                    mPlayWhenReady = false;
+                    mPlayer.seekTo(C.TIME_UNSET);
+                    mPlayer.setPlayWhenReady(mPlayWhenReady);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

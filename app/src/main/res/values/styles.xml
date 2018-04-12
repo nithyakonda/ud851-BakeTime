@@ -20,4 +20,25 @@
         <item name="android:textStyle">italic</item>
     </style>
 
+    <style name="RecipeStepDescTextViewStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
+        <item name="android:background">@drawable/recipestep_bg</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="android:autoSizeStepGranularity">2sp</item>
+    </style>
+
+    <style name="RecipeStepDescTextViewStyle.Phone" parent="RecipeStepDescTextViewStyle">
+        <item name="android:textAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="autoSizeMaxTextSize">18sp</item>
+    </style>
+
+    <style name="RecipeStepDescTextViewStyle.Tablet" parent="RecipeStepDescTextViewStyle">
+        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+        <item name="autoSizeMaxTextSize">22sp</item>
+    </style>
+
 </resources>

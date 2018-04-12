@@ -26,8 +26,10 @@ public class RecipeStepDetailPresenter implements RecipeStepDetailContract.Prese
         if (sRecipe == null)
             sRecipe = mRepository.getRecipe(sLastRecipeId);
         RecipeStep step = sRecipe.getRecipeSteps().get(sLastSelectedStepId);
-        if (step.getVideoUrl() != null) {
+        if (!step.getVideoUrl().isEmpty() && mView.isOnline()) {
             mView.showMedia(step.getVideoUrl());
+        } else {
+            mView.showNoMedia();
         }
         mView.showDesc(step.getDesc());
         enableNavButtons();

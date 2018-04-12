@@ -53,6 +53,7 @@ public class RecipeStepDetailActivity extends BaseActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             Intent intent = new Intent(this, RecipeStepListActivity.class);
+            // TODO: 4/10/18 detail->landscape, nav back mFragment null
             intent.putExtra(RecipeStepListActivity.ARGKEY_RECIPE_ID, mFragment.getRecipeId());
             navigateUpTo(intent);
             return true;

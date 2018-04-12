@@ -12,6 +12,7 @@ public interface RecipeStepDetailContract {
 
     interface View extends BaseView {
         void showMedia(String url);
+        void showNoMedia();
         void showDesc(String desc);
         void setTitle(String shortDesc);
         void enableNext(boolean enable);
