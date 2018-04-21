@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="50dp"
+             android:layout_height="100dp"
              android:id="@+id/widget_item_container">
     <ImageView
         android:id="@+id/iv_recipe_image"
@@ -14,7 +14,7 @@
     <TextView
         android:id="@+id/tv_recipe_name"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="100dp"
         android:gravity="center"
         tools:text="@string/dummy_recipe"
         android:background="@drawable/recipe_text_bg"
