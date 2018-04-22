@@ -2,6 +2,7 @@ package com.udacity.nkonda.baketime.recepiesteps.detail;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +15,9 @@ import com.udacity.nkonda.baketime.BaseActivity;
 import com.udacity.nkonda.baketime.R;
 import com.udacity.nkonda.baketime.recepiesteps.list.RecipeStepListActivity;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * An activity representing a single RecipeStep detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
@@ -24,14 +28,18 @@ public class RecipeStepDetailActivity extends BaseActivity {
     private static final String FRAGMENT_TAG = "RECIPE_STEP_DETAIL_FRAGMENT";
     RecipeStepDetailFragment mFragment;
 
+    @BindView(R.id.detail_toolbar)
+    @Nullable
+    Toolbar mToolBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipestep_detail);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
+        if (mToolBar != null) {
+            setSupportActionBar(mToolBar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 

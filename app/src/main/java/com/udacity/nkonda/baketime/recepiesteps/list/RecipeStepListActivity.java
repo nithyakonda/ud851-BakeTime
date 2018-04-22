@@ -2,6 +2,7 @@ package com.udacity.nkonda.baketime.recepiesteps.list;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -21,6 +22,10 @@ import com.udacity.nkonda.baketime.recepiesteps.detail.RecipeStepDetailActivity;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Optional;
+
 /**
  * An activity representing a list of RecipeSteps. This activity
  * has different presentations for handset and tablet-size devices. On
@@ -34,7 +39,9 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
     private static final String SAVEKEY_RECIPE_ID = "SAVEKEY_RECIPE_ID";
     private static final String SAVEKEY_STEP_ID = "SAVEKEY_STEP_ID";
 
-    private RecyclerView mRecyclerView;
+
+    @BindView(R.id.toolbar) Toolbar mToolBar;
+    @BindView(R.id.recipestep_list) RecyclerView mRecyclerView;
     private View mLastSelView;
 
     private boolean mTwoPane;
@@ -45,16 +52,15 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipestep_list);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (findViewById(R.id.recipestep_detail_container) != null) {
             mTwoPane = true;
         }
 
-        mRecyclerView = findViewById(R.id.recipestep_list);
         assert mRecyclerView != null;
         mPresenter = new RecipeStepListPresenter(this, new RecipesRepository(this));
         if (savedInstanceState == null) {
@@ -191,15 +197,21 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
         }
 
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-            final TextView mStepDescView;
-            final TextView mServingsView;
-            final LinearLayout mIngredientsLayout;
+            @BindView(R.id.tv_short_desc)
+            @Nullable
+            TextView mStepDescView;
+
+            @BindView(R.id.tv_servings)
+            @Nullable
+            TextView mServingsView;
+
+            @BindView(R.id.ll_ingredients)
+            @Nullable
+            LinearLayout mIngredientsLayout;
 
             ViewHolder(View view) {
                 super(view);
-                mStepDescView = (TextView) view.findViewById(R.id.tv_short_desc);
-                mServingsView = (TextView) view.findViewById(R.id.tv_servings);
-                mIngredientsLayout = view.findViewById(R.id.ll_ingredients);
+                ButterKnife.bind(this, view);
                 view.setOnClickListener(this);
             }
 

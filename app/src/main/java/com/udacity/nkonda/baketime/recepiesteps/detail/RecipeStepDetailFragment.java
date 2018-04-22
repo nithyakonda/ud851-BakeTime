@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,9 @@ import com.udacity.nkonda.baketime.R;
 import com.udacity.nkonda.baketime.data.source.RecipesRepository;
 import com.udacity.nkonda.baketime.recepiesteps.list.RecipeStepListActivity;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * A mFragment representing a single RecipeStep detail screen.
  * This mFragment is either contained in a {@link RecipeStepListActivity}
@@ -47,11 +51,25 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     private RecipeStepDetailPresenter mPresenter;
     private MediaPlayerStateListener mMediaPlayerStateListener;
 
-    private TextView mDescView;
-    private View mDefaultVideoView;
-    private SimpleExoPlayerView mSimpleExoPlayerView;
-    private FloatingActionButton mNextStep;
-    private FloatingActionButton mPrevStep;
+    @BindView(R.id.tv_desc)
+    @Nullable
+    TextView mDescView;
+
+    @BindView(R.id.no_video_background)
+    @Nullable
+    View mDefaultVideoView;
+
+    @BindView(R.id.exo_media)
+    @Nullable
+    SimpleExoPlayerView mSimpleExoPlayerView;
+
+    @BindView(R.id.btn_next)
+    @Nullable
+    FloatingActionButton mNextStep;
+
+    @BindView(R.id.btn_prev)
+    @Nullable
+    FloatingActionButton mPrevStep;
 
     private SimpleExoPlayer mPlayer;
     private int mCurrentWindow = 0;
@@ -84,13 +102,9 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
-        mDefaultVideoView = rootView.findViewById(R.id.no_video_background);
-        mSimpleExoPlayerView = rootView.findViewById(R.id.exo_media);
+        ButterKnife.bind(this, rootView);
         mSimpleExoPlayerView.requestFocus();
 
-        mDescView = rootView.findViewById(R.id.tv_desc);
-        mNextStep = rootView.findViewById(R.id.btn_next);
-        mPrevStep = rootView.findViewById(R.id.btn_prev);
         if (mDescView != null) {
             mDescView.setMovementMethod(new ScrollingMovementMethod());
         }

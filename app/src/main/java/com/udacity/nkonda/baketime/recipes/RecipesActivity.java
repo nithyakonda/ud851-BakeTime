@@ -15,9 +15,12 @@ import com.udacity.nkonda.baketime.data.source.RecipesRepository;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class RecipesActivity extends BaseActivity implements RecipesContract.View{
 
-    RecyclerView mRecipesView;
+    @BindView(R.id.rv_recipes) RecyclerView mRecipesView;
 
     RecipesAdapter mAdapter;
     RecipesPresenter mPresenter;
@@ -26,7 +29,7 @@ public class RecipesActivity extends BaseActivity implements RecipesContract.Vie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recepies);
-        mRecipesView = findViewById(R.id.rv_recipes);
+        ButterKnife.bind(this);
 
         RecyclerView.LayoutManager layoutManager = null;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
