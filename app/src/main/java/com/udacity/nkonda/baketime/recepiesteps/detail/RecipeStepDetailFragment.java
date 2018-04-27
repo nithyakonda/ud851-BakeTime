@@ -46,6 +46,7 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     public static final String ARG_RECIPE_STEP_ID = "ARG_RECIPE_STEP_ID";
     public static final String ARG_RECIPE_ID = "ARG_RECIPE_ID";
     private static final String ARG_PLAYBACK_POSITION = "ARG_PLAYBACK_POSITION";
+    private static final String ARG_PLAY_WHEN_READY = "ARG_PLAY_WHEN_READY";
 
     private RecipeStepDetailState mState;
     private RecipeStepDetailPresenter mPresenter;
@@ -74,7 +75,7 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     private SimpleExoPlayer mPlayer;
     private int mCurrentWindow = 0;
     private long mPlaybackPosition = 0;
-    private boolean mPlayWhenReady = true;
+    private boolean mPlayWhenReady;
 
     public RecipeStepDetailFragment() {
     }
@@ -88,12 +89,14 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
                     getArguments().getInt(ARG_RECIPE_ID),
                     getArguments().getInt(ARG_RECIPE_STEP_ID)
             );
+            mPlayWhenReady = true;
         } else {
             mState = new RecipeStepDetailState(
                     savedInstanceState.getInt(ARG_RECIPE_ID),
                     savedInstanceState.getInt(ARG_RECIPE_STEP_ID)
             );
             mPlaybackPosition = savedInstanceState.getLong(ARG_PLAYBACK_POSITION);
+            mPlayWhenReady = savedInstanceState.getBoolean(ARG_PLAY_WHEN_READY);
         }
         mMediaPlayerStateListener = new MediaPlayerStateListener();
     }
@@ -128,14 +131,36 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
     @Override
     public void onStart() {
         super.onStart();
-        initializePlayer();
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
+        }
         mPresenter.start(mState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || mPlayer == null)) {
+            initializePlayer();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        releasePlayer();
+        mPlayWhenReady = mPlayer.getPlayWhenReady();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
 
     @Override
@@ -149,6 +174,7 @@ public class RecipeStepDetailFragment extends Fragment implements RecipeStepDeta
         } else {
             outState.putLong(ARG_PLAYBACK_POSITION, mPlaybackPosition);
         }
+        outState.putBoolean(ARG_PLAY_WHEN_READY, mPlayWhenReady);
     }
 
     @Override
