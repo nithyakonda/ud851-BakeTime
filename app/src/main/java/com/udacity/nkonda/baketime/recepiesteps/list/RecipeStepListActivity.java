@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -209,6 +210,10 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
             @Nullable
             LinearLayout mIngredientsLayout;
 
+            @BindView(R.id.iv_video_icon)
+            @Nullable
+            ImageView mHasVideoIcon;
+
             ViewHolder(View view) {
                 super(view);
                 ButterKnife.bind(this, view);
@@ -235,6 +240,9 @@ public class RecipeStepListActivity extends BaseActivity implements RecipeStepLi
             void bindRecipeStep(int pos) {
                 RecipeStep step = mRecipe.getRecipeSteps().get(pos);
                 mStepDescView.setText(step.getShortDesc());
+                if (step.getVideoUrl().isEmpty()) {
+                    mHasVideoIcon.setVisibility(View.INVISIBLE);
+                }
                 itemView.setTag(step.getId());
                 if (mTwoPane && step.getId() == mState.getLastSelectedStepId()) {
                     itemView.setSelected(true);
