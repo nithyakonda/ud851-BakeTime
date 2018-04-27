@@ -5,6 +5,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
+import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -16,6 +17,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -43,12 +45,9 @@ public class RecipesActivityBasicTest {
 
     @Test
     public void onClickRecipe_matchesTitleNameInStepListActivity() {
-        ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.rv_recipes),
-                        childAtPosition(
-                                withClassName(is("android.support.constraint.ConstraintLayout")),
-                                0)));
-        recyclerView.perform(actionOnItemAtPosition(0, click()));
+        ViewInteraction recyclerView = onView(withId(R.id.rv_recipes));
+        recyclerView.perform(RecyclerViewActions.actionOnItem(
+                hasDescendant(withText(RECIPE_NAME)), click()));
 
         ViewInteraction textView = onView(allOf(instanceOf(TextView.class), withParent(withId(R.id.toolbar))));
         textView.check(matches(withText(RECIPE_NAME)));
