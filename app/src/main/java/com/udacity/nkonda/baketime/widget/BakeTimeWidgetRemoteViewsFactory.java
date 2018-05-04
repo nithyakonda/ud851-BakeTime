@@ -8,8 +8,10 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.udacity.nkonda.baketime.R;
+import com.udacity.nkonda.baketime.data.Ingredient;
 import com.udacity.nkonda.baketime.data.Recipe;
 import com.udacity.nkonda.baketime.data.source.RecipesRepository;
+import com.udacity.nkonda.baketime.util.SharedPrefHelper;
 
 import java.util.List;
 
@@ -20,8 +22,9 @@ import java.util.List;
 public class BakeTimeWidgetRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private Context mContext;
-    private List<Recipe> mRecipes;
     private RecipesRepository mRepository;
+    private List<Ingredient> mIngredients;
+    private int mRecipeId;
     private Cursor mCursor;
 
     public BakeTimeWidgetRemoteViewsFactory(Context applicationContext, Intent intent) {
@@ -36,7 +39,8 @@ public class BakeTimeWidgetRemoteViewsFactory implements RemoteViewsService.Remo
 
     @Override
     public void onDataSetChanged() {
-        mRecipes = mRepository.getRecipes();
+        mRecipeId = SharedPrefHelper.getRecipeId(mContext);
+        mIngredients = mRepository.getIngredients(mRecipeId);
     }
 
     @Override
@@ -46,22 +50,23 @@ public class BakeTimeWidgetRemoteViewsFactory implements RemoteViewsService.Remo
 
     @Override
     public int getCount() {
-        return mRecipes.size();
+        return mIngredients != null ? mIngredients.size() : 0;
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
         if (position == AdapterView.INVALID_POSITION ||
-                position >= mRecipes.size()) {
+                position >= mIngredients.size()) {
             return null;
         }
-        Recipe recipe = mRecipes.get(position);
-        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.recipe_list_item_widget);
-        rv.setTextViewText(R.id.tv_recipe_name, recipe.getName());
-        rv.setImageViewResource(R.id.iv_recipe_image, recipe.getImageResId());
+        Ingredient ingredient = mIngredients.get(position);
+        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.ingredient_item_layout);
+        rv.setTextViewText(R.id.tv_ingredient_name, ingredient.getName());
+        rv.setTextViewText(R.id.tv_ingredient_qty, String.valueOf(ingredient.getQuantity()));
+        rv.setTextViewText(R.id.tv_ingredient_measure, ingredient.getMeasureUnit());
 
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtra(BakeTimeWidget.ARGKEY_RECIPE_ID, recipe.getId());
+        fillInIntent.putExtra(BakeTimeWidget.ARGKEY_RECIPE_ID, mRecipeId);
         rv.setOnClickFillInIntent(R.id.widget_item_container, fillInIntent);
 
         return rv;
@@ -79,7 +84,7 @@ public class BakeTimeWidgetRemoteViewsFactory implements RemoteViewsService.Remo
 
     @Override
     public long getItemId(int position) {
-        return position >= mRecipes.size() ? mRecipes.get(position).getId() : position;
+        return position;
     }
 
     @Override

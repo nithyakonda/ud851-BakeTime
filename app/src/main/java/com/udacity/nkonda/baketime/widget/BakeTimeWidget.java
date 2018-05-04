@@ -9,33 +9,38 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.udacity.nkonda.baketime.R;
-import com.udacity.nkonda.baketime.recepiesteps.detail.RecipeStepDetailActivity;
 import com.udacity.nkonda.baketime.recepiesteps.list.RecipeStepListActivity;
+import com.udacity.nkonda.baketime.util.SharedPrefHelper;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class BakeTimeWidget extends AppWidgetProvider {
     public static final String ARGKEY_RECIPE_ID = "ARGKEY_RECIPE_ID";
+    RemoteViews remoteViews;
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+    void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
             int appWidgetId) {
-
-        RemoteViews views = new RemoteViews(
+        int recipeId = SharedPrefHelper.getRecipeId(context);
+        String recipeName = SharedPrefHelper.getRecipeNAme(context);
+        remoteViews = new RemoteViews(
                 context.getPackageName(),
                 R.layout.bake_time_widget
         );
+
         Intent intent = new Intent(context, BakeTimeWidgetRemoteViewsService.class);
-        views.setRemoteAdapter(R.id.lv_widget_recipe_list, intent);
+        remoteViews.setRemoteAdapter(R.id.lv_widget_ingredient_list, intent);
+        remoteViews.setTextViewText(R.id.tv_widget_recipe_name, recipeName);
 
         Intent clickIntentTemplate = new Intent(context, RecipeStepListActivity.class);
+        clickIntentTemplate.putExtra(RecipeStepListActivity.ARGKEY_RECIPE_ID, recipeId);
         PendingIntent clickPendingIntentTemplate = PendingIntent.getActivity(context,
                 0,
                 clickIntentTemplate,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setPendingIntentTemplate(R.id.lv_widget_recipe_list, clickPendingIntentTemplate);
+        remoteViews.setPendingIntentTemplate(R.id.lv_widget_ingredient_list, clickPendingIntentTemplate);
 
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
     }
 
     public static void sendRefreshBroadcast(Context context) {
@@ -60,7 +65,7 @@ public class BakeTimeWidget extends AppWidgetProvider {
             // refresh all your widgets
             AppWidgetManager mgr = AppWidgetManager.getInstance(context);
             ComponentName cn = new ComponentName(context, BakeTimeWidget.class);
-            mgr.notifyAppWidgetViewDataChanged(mgr.getAppWidgetIds(cn), R.id.lv_widget_recipe_list);
+            mgr.notifyAppWidgetViewDataChanged(mgr.getAppWidgetIds(cn), R.id.lv_widget_ingredient_list);
         }
         super.onReceive(context, intent);
     }

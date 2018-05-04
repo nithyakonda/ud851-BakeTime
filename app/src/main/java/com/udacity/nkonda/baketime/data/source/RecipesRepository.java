@@ -42,7 +42,7 @@ public class RecipesRepository implements RecipesDataSource{
 
     @Override
     public List<Ingredient> getIngredients(int recipeId) {
-        return null;
+        return getRecipe(recipeId).getIngredients();
     }
 
     @Override
